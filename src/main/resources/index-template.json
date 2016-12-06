@@ -1,0 +1,33 @@
+{
+  "mappings": {
+    "report": {
+      "_all": {
+        "enabled": true
+      },
+      "properties": {
+        "id": {
+          "type": "keyword"
+        },
+        "timestamp": {
+          "type": "date",
+          "format": "strict_date_optional_time"
+        },
+        "reporter": {
+          "type": "keyword"
+        },
+        "event_type": {
+          "type": "keyword"
+        },
+        "object_id": {
+          "type": "keyword"
+        },
+        "summary": {
+          "type": "text"
+        },
+        "user": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
