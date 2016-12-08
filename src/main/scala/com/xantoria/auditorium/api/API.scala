@@ -10,15 +10,20 @@ import akka.stream.{ActorMaterializer, Materializer}
 
 import com.xantoria.auditorium.reporting.ElasticsearchClient
 
-final class API(private val esClient: ElasticsearchClient)(
-  private implicit val system: ActorSystem,
-  private implicit val mat: Materializer
-) extends EventReporting with JsonSupport {
-  private implicit val executionContext = system.dispatcher
+trait API extends EventReporting with JsonSupport {
+  protected val esClient: ElasticsearchClient
+  protected implicit val system: ActorSystem
+  protected implicit val executionContext = system.dispatcher
+  protected implicit val mat: Materializer
 
-  private val route: Route = eventRoutes
+  protected val route: Route = eventRoutes
 
   def bind(host: String, port: Int): Future[Http.ServerBinding] = {
     Http().bindAndHandle(route, host, port)
   }
 }
+
+final class Service(override protected val esClient: ElasticsearchClient)(
+  override protected implicit val system: ActorSystem,
+  override protected implicit val mat: Materializer
+) extends API

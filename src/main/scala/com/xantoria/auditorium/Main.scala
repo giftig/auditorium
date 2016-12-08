@@ -5,7 +5,7 @@ import akka.http.scaladsl.Http
 import akka.stream.{ActorMaterializer, Materializer}
 import org.slf4j.LoggerFactory
 
-import com.xantoria.auditorium.api.API
+import com.xantoria.auditorium.api.Service
 import com.xantoria.auditorium.config.Config
 import com.xantoria.auditorium.reporting.ElasticsearchClient
 
@@ -25,7 +25,7 @@ object Main {
     implicit val ec = system.dispatcher
 
     val elasticsearch = new ElasticsearchClient(cfg.esUri, cfg.esIndexPrefix)
-    val binding = new API(elasticsearch).bind(cfg.interface, cfg.port)
+    val binding = new Service(elasticsearch).bind(cfg.interface, cfg.port)
 
     // FIXME: Clearly this shouldn't be kept
     // Shut down after receiving a new line

@@ -21,7 +21,7 @@ trait ElasticsearchReporting extends JsonSupport {
   // The concrete class must provide a connection pool to serve requests
   protected val connPool: Flow[(HttpRequest, Int), (Try[HttpResponse], Int), HostConnectionPool]
 
-  protected val fileReport: Flow[Report, (Try[HttpResponse], Int), NotUsed] = {
+  val fileReport: Flow[Report, (Try[HttpResponse], Int), NotUsed] = {
     Flow.fromFunction[Report, (HttpRequest, Int)] {
       report: Report => {
         val now = new GregorianCalendar()

@@ -3,15 +3,16 @@ package com.xantoria.auditorium.api
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import akka.stream.scaladsl._
 
 import com.xantoria.auditorium.reporting._
 
 trait EventReporting {
-  this: JsonSupport =>
+  this: API =>
 
   import EventReporting._
 
-  private val reportEvent: Route = path("report" ~ Slash.?) {
+  private val reportEventRoute: Route = path("report" ~ Slash.?) {
     post {
       entity(as[Report]) {
         report: Report => {
@@ -19,6 +20,7 @@ trait EventReporting {
             val errors: List[String] = report.configErrors
 
             if (errors.isEmpty) {
+              Source.single(report).via(esClient.fileReport).runWith(Sink.ignore)
               202 -> Ack.success
             } else {
               400 -> Ack.error(s"Validation errors: ${errors.mkString(", ")}")
@@ -30,7 +32,7 @@ trait EventReporting {
     }
   }
 
-  protected val eventRoutes: Route = reportEvent
+  protected val eventRoutes: Route = reportEventRoute
 }
 
 object EventReporting {
