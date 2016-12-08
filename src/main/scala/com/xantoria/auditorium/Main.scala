@@ -2,9 +2,12 @@ package com.xantoria.auditorium
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.stream.{ActorMaterializer, Materializer}
 import org.slf4j.LoggerFactory
 
 import com.xantoria.auditorium.api.API
+import com.xantoria.auditorium.config.Config
+import com.xantoria.auditorium.reporting.ElasticsearchClient
 
 object Main {
   private val logger = LoggerFactory.getLogger("main")
@@ -12,18 +15,22 @@ object Main {
   private val port: Int = 8000
 
   def main(args: Array[String]): Unit = {
-    logger.info("com.xantoria:auditorium:0.0.1 skeleton commit")
-    logger.info(s"Starting HTTP interface on http://$interface:$port...")
+    val cfg = new Config()
+
+    logger.info("Service auditorium starting...")
+    logger.info(s"Starting HTTP interface on http://${cfg.interface}:${cfg.port}...")
 
     implicit val system = ActorSystem("auditorium")
+    implicit val mat: Materializer = ActorMaterializer()
     implicit val ec = system.dispatcher
 
-    val binding = new API().bind(interface, port)
+    val elasticsearch = new ElasticsearchClient(cfg.esUri, cfg.esIndexPrefix)
+    val binding = new API(elasticsearch).bind(cfg.interface, cfg.port)
 
-    import io.StdIn
-    StdIn.readLine()
-
+    // FIXME: Clearly this shouldn't be kept
     // Shut down after receiving a new line
+    import scala.io.StdIn
+    StdIn.readLine()
     binding flatMap { _.unbind() } onComplete { _ => system.terminate() }
   }
 }

@@ -3,19 +3,13 @@ package com.xantoria.auditorium.api
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import spray.json.DefaultJsonProtocol._
 
 import com.xantoria.auditorium.reporting._
 
 trait EventReporting {
-  import EventReporting._
+  this: JsonSupport =>
 
-  implicit val reportFormat = jsonFormat(
-    Report.apply,
-    "id", "timestamp", "reporter", "event_type", "object_id", "summary", "user"
-  )
-  implicit val ackFormat = jsonFormat2(Ack.apply)
+  import EventReporting._
 
   private val reportEvent: Route = path("report" ~ Slash.?) {
     post {
