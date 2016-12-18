@@ -50,6 +50,10 @@ case class Report(
   }
 }
 
+case class ReportWithIndex(r: Report, index: String) {
+  override def toString: String = s"Report ${r.id} on index $index"
+}
+
 object Report {
   val timestampPattern: Regex = """^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$""".r
   val maxFieldLength: Int = 512 // Fairly generous general limit, mostly to allow long summaries

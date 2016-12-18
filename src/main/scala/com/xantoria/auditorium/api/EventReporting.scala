@@ -28,6 +28,7 @@ trait EventReporting {
             if (errors.isEmpty) {
               logger.debug(s"Report ${report.id} is valid")
               Source.single(report).via(esClient.fileReport).runWith(Sink.ignore)
+
               202 -> Ack.success
             } else {
               logger.warn(s"Report ${report.id} failed validation: ${errors.length} errors")

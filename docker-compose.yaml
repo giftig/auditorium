@@ -2,7 +2,7 @@ version: '2'
 
 services:
   elasticsearch:
-    image: elasticsearch:latest
+    build: elasticsearch
     ports:
       - 9200:9200
 
