@@ -1,0 +1,9 @@
+{
+  "id": "my-friendly-report-0001",
+  "timestamp": "2016-12-18T00:00:00Z",
+  "reporter": "best-service",
+  "event_type": "CREATE",
+  "object_id": "best-service:my-awesome-item-0001",
+  "summary": "An awesome item was created in the best service ever",
+  "user": "me"
+}

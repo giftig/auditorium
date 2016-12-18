@@ -26,11 +26,5 @@ object Main {
 
     val elasticsearch = new ElasticsearchClient(cfg.esUri, cfg.esIndexPrefix)
     val binding = new Service(elasticsearch).bind(cfg.interface, cfg.port)
-
-    // FIXME: Clearly this shouldn't be kept
-    // Shut down after receiving a new line
-    import scala.io.StdIn
-    StdIn.readLine()
-    binding flatMap { _.unbind() } onComplete { _ => system.terminate() }
   }
 }

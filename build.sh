@@ -46,6 +46,9 @@ while [[ "$1" != '' ]]; do
       fi
       EXTRA_CONFIG="$EXTRA_CONFIG -v $MAVEN_REPO:/root/.m2"
       ;;
+    --local-maven)
+      LOCAL_MAVEN=1
+      ;;
     *)
       echo "Unrecognised argument: $arg"
       usage
@@ -54,34 +57,44 @@ while [[ "$1" != '' ]]; do
   esac
 done
 
-if [[ "$NO_COLOUR" == 1 ]]; then
-  MAVEN_IMAGE='maven:latest'
-  CMD='mvn'
-else
-  if [[ "$(docker images -q giftig/maven)" == '' ]]; then
-    echo 'giftig/maven not found in your docker environment.'
-    echo 'If you would like to run maven through some colourisation, run:'
-    echo '  docker pull giftig/maven'
-    echo 'If you do not want to use that image or see this message, use --nocolor'
+build_maven() {
+  if [[ "$LOCAL_MAVEN" == 1 ]]; then
+    mvn clean test package
+    return
+  fi
+
+  if [[ "$NO_COLOUR" == 1 ]]; then
     MAVEN_IMAGE='maven:latest'
     CMD='mvn'
   else
-    MAVEN_IMAGE='giftig/maven:latest'
-    CMD=''
+    if [[ "$(docker images -q giftig/maven)" == '' ]]; then
+      echo 'giftig/maven not found in your docker environment.'
+      echo 'If you would like to run maven through some colourisation, run:'
+      echo '  docker pull giftig/maven'
+      echo 'If you do not want to use that image or see this message, use --nocolor'
+      MAVEN_IMAGE='maven:latest'
+      CMD='mvn'
+    else
+      MAVEN_IMAGE='giftig/maven:latest'
+      CMD=''
+    fi
   fi
-fi
 
-cd $DIR
+  cd $DIR
 
-docker run \
-  --rm \
-  -v $DIR:/usr/src \
-  -w /usr/src \
-  -u $(id -u):$(id -g) \
-  -e TERM \
-  $EXTRA_CONFIG \
-  $MAVEN_IMAGE $CMD \
-  clean test package || exit 1
+  docker run \
+    --rm \
+    -v $DIR:/usr/src \
+    -w /usr/src \
+    -u $(id -u):$(id -g) \
+    -e TERM \
+    $EXTRA_CONFIG \
+    $MAVEN_IMAGE $CMD \
+    clean test package || exit 1
+
+}
+
+build_maven || exit 1
 
 mv build/auditorium-*.jar build/auditorium.jar || exit 1
 

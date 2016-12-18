@@ -16,6 +16,6 @@ services:
       ELASTICSEARCH_URL: http://elasticsearch:9200
 
   auditorium:
-    image: giftig/auditorium:latest
+    image: auditorium:snapshot
     ports:
-      - 8080:80
+      - 8080:8080

@@ -1,0 +1,9 @@
+{
+  "id": "super-malicious-report-0001",
+  "timestamp": "2016-12-18T16:00:00Z",
+  "reporter": "best-service",
+  "event_type": "EDIT",
+  "object_id": "best-service:my-awesome-item-0001",
+  "summary": "Someone devious corrupted what used to be an awesome item",
+  "user": "malicious_person"
+}
