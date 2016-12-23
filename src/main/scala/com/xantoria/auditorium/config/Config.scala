@@ -1,5 +1,7 @@
 package com.xantoria.auditorium.config
 
+import scala.concurrent.duration.{Duration, FiniteDuration}
+
 import akka.http.scaladsl.model.Uri
 import com.typesafe.config.{Config => TypesafeConfig, ConfigFactory}
 
@@ -20,4 +22,9 @@ class Config {
     )
   }
   val esIndexPrefix = cfg.getString("elasticsearch.index_prefix")
+
+  // The interval at which to ensure current and future indices have been created
+  val createIndexInterval = Duration(
+    cfg.getString("elasticsearch.create_index_interval")
+  ).asInstanceOf[FiniteDuration]
 }
