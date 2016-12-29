@@ -1,0 +1,9 @@
+{
+  "id": "{{ report_id }}",
+  "timestamp": "{{ timestamp }}",
+  "reporter": "bootstrapper",
+  "event_type": "EDIT",
+  "object_id": "{{ object_id }}",
+  "summary": "I edited an item called {{ object_id }} and I regret nothing!",
+  "user": "me"
+}
